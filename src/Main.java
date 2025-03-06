@@ -17,18 +17,17 @@ public class Main {
     }
 
     public static void createDirectoryTemp() {
-        String srcPath = rootPath + "temp/";
-        File createdSrcMain = new File(srcPath);
-        if (createdSrcMain.mkdirs()) {
+        String tempPath = rootPath + "temp/";
+        File createdTemp = new File(tempPath);
+        if (createdTemp.mkdirs()) {
             System.out.println("Каталог temp создан");
-
         }
 
         try {
-            temp = new File(srcPath, "temp.txt");
+            temp = new File(createdTemp, "temp.txt");
             if (temp.createNewFile()) {
                 System.out.println("Файл temp.txt создался");
-                writeToFileTemp(createdSrcMain);
+                writeToFileTemp(createdTemp);
             }
         } catch (IOException e) {
             System.out.println("Файл temp.txt не создался");
@@ -48,9 +47,34 @@ public class Main {
         }
     }
 
+    public static void writeToFileTempFile(File file) {
+        try (FileOutputStream fos = new FileOutputStream(temp, true)) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Создан файл " + file.getName()+ " в каталоге "+ file.getAbsolutePath()+"\n");
+            String text = sb.toString();
+            byte[] buffer = text.getBytes();
+            fos.write(buffer);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
+
     public static void createDirectoryRes() {
-        String srcPath = rootPath + "res/";
-        File createdDrawables = new File(srcPath + "drawables");
+        String resPath = rootPath + "res/";
+        // Создание папки res
+        File resPathDir = new File(resPath);
+        if (resPathDir.mkdirs()) {
+            System.out.println("Каталог res/ создан");
+            try {
+                writeToFileTemp(resPathDir);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        //Создание папки drawables
+        File createdDrawables = new File(resPath + "drawables");
         if (createdDrawables.mkdirs()) {
             System.out.println("Каталог res/drawables создан");
             try {
@@ -59,7 +83,8 @@ public class Main {
                 throw new RuntimeException(e);
             }
         }
-        File createdVectors = new File(srcPath + "vectors");
+        // создание папки vectors
+        File createdVectors = new File(resPath + "vectors");
         if (createdVectors.mkdirs()) {
             System.out.println("Каталог res/vectors создан");
             try {
@@ -68,20 +93,25 @@ public class Main {
                 throw new RuntimeException(e);
             }
         }
-        File createdIcons = new File(srcPath + "icons");
+        // создание папки icons
+        File createdIcons = new File(resPath + "icons");
         if (createdIcons.mkdirs()) {
             System.out.println("Каталог res/icons создан");
-            //writeToFileTemp(createdIcons);
+            try {
+                writeToFileTemp(createdIcons);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
     public static void createDirectorySaveGames() {
-        String srcPath = rootPath + "savegames/";
-        File createdSrcMain = new File(srcPath);
-        if (createdSrcMain.mkdirs()) {
+        String saveGamePath = rootPath + "savegames/";
+        File createdSaveGamesDir = new File(saveGamePath);
+        if (createdSaveGamesDir.mkdirs()) {
             System.out.println("Каталог savegames создан");
             try {
-                writeToFileTemp(createdSrcMain);
+                writeToFileTemp(createdSaveGamesDir);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -90,6 +120,15 @@ public class Main {
 
     public static void createDirectorySrc() {
         String srcPath = rootPath + "src/";
+        File srcPathDir = new File(srcPath);
+        if (srcPathDir.mkdirs()) {
+            System.out.println("Каталог src/ создан");
+            try {
+                writeToFileTemp(srcPathDir);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
         File createdSrcMain = new File(srcPath + "main");
         if (createdSrcMain.mkdirs()) {
             System.out.println("Каталог src/main создан");
@@ -104,12 +143,20 @@ public class Main {
             File mainJava = new File(srcPath + "main/", "Main.java");
             if (mainJava.createNewFile()) {
                 System.out.println("Файл Main.java создан");
-                //writeToFileTemp(mainJava);
+                try {
+                    writeToFileTempFile(mainJava);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
             File utilsJava = new File(srcPath + "main/", "Utils.java");
             if (utilsJava.createNewFile()) {
                 System.out.println("Файл Utils.java создан");
-                //writeToFileTemp(utilsJava);
+                try {
+                    writeToFileTempFile(utilsJava);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
         } catch (IOException e) {
             System.out.println("В ходе создания файлов произошла ошибка");
@@ -118,6 +165,11 @@ public class Main {
         File createdSrcTest = new File(srcPath + "test");
         if (createdSrcTest.mkdirs()) {
             System.out.println("Каталог src/test создан");
+            try {
+                writeToFileTemp(createdSrcTest);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
 
         }
     }
