@@ -1,7 +1,8 @@
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class Main {
     public static final String rootPath = "C://Users//Admin//Games/";
@@ -13,7 +14,72 @@ public class Main {
         createDirectoryRes();
         createDirectorySaveGames();
 
+        GameProgress gm1 = new GameProgress(50, 10, 1, 158.2);
+        GameProgress gm2 = new GameProgress(80, 30, 2, 100.1);
+        GameProgress gm3 = new GameProgress(100, 50, 3, 525.3);
 
+        File gm1File = saveGames(rootPath + "savegames", "save_1.dat", gm1);
+        File gm2File = saveGames(rootPath + "savegames", "save_2.dat", gm2);
+        File gm3File = saveGames(rootPath + "savegames", "save_3.dat", gm3);
+
+        ArrayList<File> files = new ArrayList<>();
+        files.add(gm1File);
+        files.add(gm2File);
+        files.add(gm3File);
+
+        zipFiles(rootPath + "savegames", "savings.zip", files);
+
+        deleteFiles(files);
+
+    }
+
+    public static void zipFiles(String path, String nameZip, ArrayList<File> files) {
+        try (FileOutputStream fileOutputStream = new FileOutputStream(new File(path, nameZip));
+             ZipOutputStream zipOutputStream = new ZipOutputStream(fileOutputStream)
+        ) {
+            for (var file : files) {
+                FileInputStream fileDataSaving = new FileInputStream(file.getAbsoluteFile());
+                ZipEntry zipEntry = new ZipEntry(file.getName());
+
+                zipOutputStream.putNextEntry(zipEntry);
+
+                byte[] buffer = new byte[fileDataSaving.available()];
+                fileDataSaving.read(buffer);
+                zipOutputStream.write(buffer);
+
+                zipOutputStream.closeEntry();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void deleteFiles(ArrayList<File> files) {
+        for (File fileToDelete : files) {
+            if (fileToDelete.exists()) {
+                boolean isDeleted = fileToDelete.delete();
+                if (isDeleted) {
+                    System.out.println("Файл удален.");
+                } else {
+                    System.out.println("Не удалось удалить файл.");
+                }
+            } else {
+                System.out.println("Файл не найден.");
+            }
+        }
+    }
+
+    public static File saveGames(String filepath, String filename, GameProgress gameProgress) {
+        File fileNameSave = new File(filepath, filename);
+
+        try (FileOutputStream fileOutputStream = new FileOutputStream(fileNameSave);
+             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream)
+        ) {
+            objectOutputStream.writeObject(gameProgress);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+        return fileNameSave;
     }
 
     public static void createDirectoryTemp() {
@@ -28,6 +94,7 @@ public class Main {
             if (temp.createNewFile()) {
                 System.out.println("Файл temp.txt создался");
                 writeToFileTemp(createdTemp);
+                writeToFileTempFile(temp);
             }
         } catch (IOException e) {
             System.out.println("Файл temp.txt не создался");
@@ -38,7 +105,7 @@ public class Main {
     public static void writeToFileTemp(File file) {
         try (FileOutputStream fos = new FileOutputStream(temp, true)) {
             StringBuilder sb = new StringBuilder();
-            sb.append("Создан каталог " + file.getAbsolutePath()+ "\n");
+            sb.append("Создан каталог " + file.getAbsolutePath() + "\n");
             String text = sb.toString();
             byte[] buffer = text.getBytes();
             fos.write(buffer);
@@ -50,7 +117,7 @@ public class Main {
     public static void writeToFileTempFile(File file) {
         try (FileOutputStream fos = new FileOutputStream(temp, true)) {
             StringBuilder sb = new StringBuilder();
-            sb.append("Создан файл " + file.getName()+ " в каталоге "+ file.getAbsolutePath()+"\n");
+            sb.append("Создан файл " + file.getName() + " в каталоге " + file.getAbsolutePath() + "\n");
             String text = sb.toString();
             byte[] buffer = text.getBytes();
             fos.write(buffer);
@@ -58,8 +125,6 @@ public class Main {
             System.out.println(e.getMessage());
         }
     }
-
-
 
     public static void createDirectoryRes() {
         String resPath = rootPath + "res/";
