@@ -96,6 +96,7 @@ public class Main {
         }
     }
 
+    // Старый код
     /*
     public static void createDirectoryTemp() {
         String tempPath = rootPath + "temp/"; // tempPath = C://Users//Admin//Games/temp/
@@ -115,7 +116,7 @@ public class Main {
         }
 
     }
-    */
+
 
     public static void writeToFileTemp(File file) {
         try (FileOutputStream fos = new FileOutputStream(file, true)) {
@@ -141,7 +142,7 @@ public class Main {
             System.out.println(e.getMessage());
         }
     }
-     */
+
 
     public static void createDirectoryRes() {
         String resPath = rootPath + "res/";
@@ -199,7 +200,7 @@ public class Main {
             }
         }
     }
-/*
+
     public static void createDirectorySrc() {
         String srcPath = rootPath + "src/";
         File srcPathDir = new File(srcPath);
