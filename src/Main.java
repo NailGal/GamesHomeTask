@@ -10,10 +10,7 @@ public class Main {
     public static File file;
 
     public static void main(String[] args) {
-//        createDirectoryTemp();
-//        createDirectorySrc();
-//        createDirectoryRes();
-//        createDirectorySaveGames();
+
         createDirectoryTemp(rootPath + "temp/");
         createFileTemp(rootPath + "temp/", "temp.txt");
         createDirectory(rootPath + "src/");
