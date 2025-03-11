@@ -114,7 +114,8 @@ public class Main {
         }
     }
 
-    public static void zipFiles(String path, String nameZip, ArrayList<File> files) {
+
+    /*public static void zipFiles(String path, String nameZip, ArrayList<File> files) {
         try (FileOutputStream fileOutputStream = new FileOutputStream(new File(path, nameZip));
              ZipOutputStream zipOutputStream = new ZipOutputStream(fileOutputStream)
         ) {
@@ -125,10 +126,30 @@ public class Main {
                 zipOutputStream.putNextEntry(zipEntry);
 
                 byte[] buffer = new byte[fileDataSaving.available()];
-                fileDataSaving.read(buffer);
+                int read = fileDataSaving.read(buffer);
                 zipOutputStream.write(buffer);
 
                 zipOutputStream.closeEntry();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    } */
+
+    public static void zipFiles(String path, String nameZip, ArrayList<File> files) {
+        try (FileOutputStream fileOutputStream = new FileOutputStream(new File(path, nameZip));
+             ZipOutputStream zipOutputStream = new ZipOutputStream(fileOutputStream)) {
+            for (File file : files) {
+                try (FileInputStream fileDataSaving = new FileInputStream(file)) { // Исправлено: поток закрывается автоматически
+                    ZipEntry zipEntry = new ZipEntry(file.getName());
+                    zipOutputStream.putNextEntry(zipEntry);
+
+                    byte[] buffer = new byte[fileDataSaving.available()];
+                    fileDataSaving.read(buffer);
+                    zipOutputStream.write(buffer);
+
+                    zipOutputStream.closeEntry();
+                } // FileInputStream закрывается здесь
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
