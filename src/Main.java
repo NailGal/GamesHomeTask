@@ -114,28 +114,6 @@ public class Main {
         }
     }
 
-
-    /*public static void zipFiles(String path, String nameZip, ArrayList<File> files) {
-        try (FileOutputStream fileOutputStream = new FileOutputStream(new File(path, nameZip));
-             ZipOutputStream zipOutputStream = new ZipOutputStream(fileOutputStream)
-        ) {
-            for (var file : files) {
-                FileInputStream fileDataSaving = new FileInputStream(file.getAbsoluteFile());
-                ZipEntry zipEntry = new ZipEntry(file.getName());
-
-                zipOutputStream.putNextEntry(zipEntry);
-
-                byte[] buffer = new byte[fileDataSaving.available()];
-                int read = fileDataSaving.read(buffer);
-                zipOutputStream.write(buffer);
-
-                zipOutputStream.closeEntry();
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    } */
-
     public static void zipFiles(String path, String nameZip, ArrayList<File> files) {
         try (FileOutputStream fileOutputStream = new FileOutputStream(new File(path, nameZip));
              ZipOutputStream zipOutputStream = new ZipOutputStream(fileOutputStream)) {
