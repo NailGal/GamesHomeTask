@@ -44,6 +44,16 @@ public class Main {
 
         deleteFiles(files);
 
+        File zipFile = new File(rootPath + "savegames/savings.zip");
+        openZip(zipFile.getAbsolutePath(), rootPath + "savegames/");
+
+        // Выбираем первый распакованный файл для демонстрации
+        File[] unzippedFiles = new File(rootPath + "savegames/").listFiles((dir, name) -> name.endsWith(".dat"));
+        if (unzippedFiles != null && unzippedFiles.length > 0) {
+            GameProgress loadedGame = openProgress(unzippedFiles[0].getAbsolutePath());
+            System.out.println("Загруженная игра: " + loadedGame);
+        }
+
     }
 
     public static void createDirectoryTemp(String path) {
@@ -160,6 +170,40 @@ public class Main {
             System.out.println(e.getMessage());
         }
         return fileNameSave;
+    }
+
+    public static void openZip(String zipPath, String destDir) {
+        try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zipPath))) {
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry()) != null) {
+                File newFile = new File(destDir + entry.getName());
+                
+                // Создаем родительские директории при необходимости
+                new File(newFile.getParent()).mkdirs();
+                
+                try (FileOutputStream fos = new FileOutputStream(newFile)) {
+                    byte[] buffer = new byte[1024];
+                    int length;
+                    while ((length = zis.read(buffer)) > 0) {
+                        fos.write(buffer, 0, length);
+                    }
+                }
+                System.out.println("Распакован: " + entry.getName());
+            }
+        } catch (IOException e) {
+            System.out.println("Ошибка при распаковке: " + e.getMessage());
+        }
+    }
+
+    // Новый метод для десериализации
+    public static GameProgress openProgress(String filePath) {
+        try (FileInputStream fis = new FileInputStream(filePath);
+             ObjectInputStream ois = new ObjectInputStream(fis)) {
+            
+            return (GameProgress) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException("Ошибка при загрузке игры: " + e.getMessage());
+        }
     }
 
 }
